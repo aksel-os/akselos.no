@@ -1,0 +1,3 @@
+#+title: Muh Website
+
+This is a repo to host my website akselos.no
