@@ -1,0 +1,3 @@
+#+TITLE: Notes
+
+- [[file:sortering.org][Sortering]]

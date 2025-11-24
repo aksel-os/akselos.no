@@ -115,10 +115,11 @@
   }
 }
 
-/* Base layout & typography */
+/* Global solid background (Latte/Mocha via --bg) */
 html {
   box-sizing: border-box;
   scroll-behavior: smooth;
+  background: var(--bg); /* ensure the root has the same solid bg */
 }
 *, *::before, *::after { box-sizing: inherit; }
 
@@ -126,13 +127,15 @@ body {
   margin: 0;
   padding: 0 1rem;
   color: var(--text);
-  background: linear-gradient(0deg, var(--bg) 0%, var(--bg-alt) 100%);
+  /* Replace the gradient with a single color */
+  background: var(--bg);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   line-height: 1.6;
   max-width: 76ch;
   margin-left: auto;
   margin-right: auto;
 }
+
 
 /* Org export title/subtitle */
 .title {
@@ -332,4 +335,62 @@ pre, .src, .example, .verbatim, .org-src-container pre {
 
 /* Search highlights (if any) */
 mark {
-  background: var(--ctp-rosewater
+    background: var(--ctp-rosewater);
+}
+
+/* Minimal page footer */
+.page-footer {
+  margin-top: 2rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-subtle);
+  font-size: 0.95rem;
+  text-align: right;
+}
+    
+
+/* Minimal notes overview — bigger, centered links */
+.notes-container {
+  margin: 2rem auto;
+  max-width: 76ch;
+  padding: 0 0.5rem;
+  text-align: center; /* center the list items */
+}
+
+.note-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.note-list li {
+  margin: 0.6rem 0; /* a bit more breathing room */
+}
+
+.note-list a {
+  display: inline-block;               /* shrink to content and allow padding */
+  font-size: clamp(1.15rem, 2.5vw, 1.6rem); /* responsive size */
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.25rem 0.6rem;
+  border-radius: 8px;
+  border-bottom: 2px solid transparent; /* subtle underline on hover */
+  transition: transform 0.06s ease, box-shadow 0.12s ease, color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.note-list a:hover,
+.note-list a:focus {
+  color: var(--link);
+  border-bottom-color: var(--accent);
+  background: var(--bg-elev);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+}
+
+.note-list a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+
