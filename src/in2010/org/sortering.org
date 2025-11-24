@@ -1,0 +1,232 @@
+#+title: Sortering
+#+author: Aksel Olav Steen
+#+date: Nov 22 2025
+:PROPERTIES:
+#+options: toc:nil num:nil
+#+latex_header: \setlength{\parindent}{0pt}
+#+latex_header: \usepackage[margin=3cm]{geometry}
+#+latex_engraved_theme: nano-light
+:END:
+
+* Litt om sortering
+  Vi har to konsepter rundt sortering. In-place og Stabil sortering \\
+
+  For at en algoritme skal være in-place betyr det at vi opererer alltid over
+  det samme arrayet, og vi lager ikke nye arrayer. \\
+
+  For at en algoritme skal være stabil vil det bety at elementer med lik verdi
+  vil opprettholde samme rekkefølge etter arrayet er blitt sortert. \\
+
+  Ved å bruke sorterte arrayer vil vi også ha en ekstremt mer effektiv måte for
+  lookup, nemlig en algoritme kalt Binær Søk, som da gir oss O(log(n)) for
+  lookup.
+
+
+* Bubble sort
+  O(n^2) \\
+  In-place, Stabil \\
+
+  Tanken bak bubble-sort er å løpe igjennom arrayet, og deretter rette opp
+  "feil". Vi gjør dette helt til det ikke er flere feil å rette opp i.
+
+  1. Vi løper over hvert par av etterfølgende elementer i arrayet.
+  2. Vi bytter deretter om rekkefølgen på et par dersom det ikke er ordnet.
+  3. Gå til punkt 1 dersom det forekommer minst ett bytte.
+
+  Totalt med bubble sort vil vi få (n(n-1)/2) iterasjoner. Ved å løse opp
+  paranteser får vi O(n^2) som store O notasjon.
+  
+  
+* Selection sort
+  O(n^2) \\
+  In-place, Ikke stabil \\
+
+  Idéen bak selection sort er å finne det minste elementet av resten, og
+  plassere det fremst. Dermed er selection sort normalt ikke stabil.
+
+  1. La i være 0.
+  2. Finn hvor det minste elementet fra i og utover ligger.
+  3. Bytt ut det minste elementet på plass med i.
+  4. Øk i, og gå til punkt 2 frem til i når størrelsen av arrayet.
+
+  Vi får da at under enhver iterasjon vil verdier til venstre for i være
+  sortert. Selection sort vil også maksimalt utføre n-1 swaps, som kan være
+  nyttig i de tilfellene hvor bytting er dyrt. \\
+
+  Merk at i selection sort så kan vi ikke bryte den ytre loopen tidlig slik vi
+  kan med bubble sort.
+  
+  
+* Insertion sort
+  O(n^2) \\
+  In-place, Stabil \\
+
+  Tanken rundt insertion sort er å plassere alle elementene sortert inn i en
+  liste. Vi lar alle elementer til venstre for en gitt posisjon i være sortert.
+
+  1. La i være 1.
+  2. Dra det i-te elementet mot venstre som ved sortert innsetting.
+  3. Øk i, og gå til punkt 2 frem til i når størrelsen av arrayet.
+
+  Insertion sort egner seg ekstremt bra på "nesten sorterte" arrayer, dette
+  gjør at den ofte er blant de raskeste algoritmene på små arrayer.
+
+** Litt pseudokode
+   #+begin_src 
+   for i <- 1 to |arr|
+     j <- i
+     while j > 0 and arr[j] < arr[j-1]
+       swap arr[j], arr[j-1]
+       decrement j by 1 
+   #+end_src
+  
+   
+* Heapsort
+  O(n log(n)) \\
+  In-place, Ikke stabil \\
+  
+  Idéen bak heapsort er å bygge en heap, og deretter poppe elementer av heapen.
+  Fordi en heap kan implementeres med et array, gjør vi arrayet om til en heap.
+
+  1. Bygge en max-heap med BubbleDown fra floor(n / 2) ned til 0.
+  2. La i være n - 1.
+  3. Bytt A[0] og A[i], og kall på BubbleDown med n = i for en redusert heap.
+  4. Senk i, og gå til punkt 3 frem til i blir 0.
+
+  Under prosessen vil da alle verdier til høyre for i være sortert.
+
+** Litt om heapifisering
+   Vi begynner på i <- floor(n / 2), og beveger oss ned til i = 0. Dette er
+   fordi for enhver nodeindeks i >= floor(n / 2) gjelder at 2i + 2 >= n, altså
+   har den ingen barn, og dermed oppfyller regelen til en max-heap hvor foreldrenoder ikke kan ha barn større enn seg selv.
+
+   1. Vi begynner med å initialisere følgende verdier.
+      + largest <- i. Denne holder styr på den største indeksen.
+      + left <- i*2 + 1. Denne holder styr på indeksen til venstre barnet.
+      + right <- i*2 + 2. Denne holder styr på indeksen til høyre barnet.
+   2. Hvis venstre-barn eller høyre-barn er større enn A[i], oppdater
+      largest til den nye største verdien.
+   3. Hvis i ikke er largest så swapper vi A[largest] med A[i], og kaller
+      rekursivt på BubbleDown med largest som argument for i.
+
+  
+* Merge sort
+  O(n log(n)) \\
+  Ikke in-place, Stabil \\
+
+  Idéen bak merge sort er å splitte arrayet i ca. to like store deler. Deretter
+  sorterer vi de to mindre arrayene, og til slutt så fletter vi (/merge/) de to
+  sorterte arrayene sammen.
+
+  1. La n angi størrelsen på arrayet A
+  2. Hvis n <= 1 så returner A
+  3. La i være floor(n / 2)
+  4. Splitt arrayet i to deler, A[0, i-1], A[i, n-1]
+  5. Anvend merge sort rekursivt på de splittede arrayene
+  6. Flett sammen A[0, i-1] og A[i, n-1] sortert
+
+  Merge sort kan bli sett på som en postorder operasjon. Vi kaller rekursivt på
+  venstre subtre, deretter høyre subtre, og til slutt rot-noden.
+
+** Litt om merging
+   Vi tar in 3 variabler, A1, A2, og A. Hvor A1 og A2 er den splittet delen av
+   A. Deretter løper vi igjennom A1 og A2, og sammenligner de med hverandre. Vi
+   må også holde styr på hvor mange av elementene i A1 og A2 vi har flyttet på. \\
+
+   For enhver variabel i A1 og A2 som vi sammenligner, så setter vi den minste
+   variablen på plassen A[p1 + p2], hvor p1, p2 er en teller som øker for hver
+   gang vi setter ett element fra det korresponderende arrayet. \\
+
+   Etter p1 eller p2 blir større enn lengden til sitt korresponderende array så
+   vet vi at vi er ferdig med alle elementene i en av de. \\
+
+   Til slutt må vi da kaste på de siste elementene i det arrayet som vi ikke
+   har blitt ferdig med. \\
+
+   Det er viktig å vite at grunnen til at merge sort blir ansett for å være
+   stabil er at under sammenligning av A1 og A2 tar vi alltid fra A1 under
+   likhet, altså brukes A1[p1] <= A2[p2].
+   
+  
+* Quicksort
+  O(n log(n)), O(n^2) \\
+  In-place, Ikke stabil \\
+
+  Idéen bak quicksort er å velge ett element, og deretter:
+  
+  - Samle alt som er mindre enn elementet til venstre for det.
+  - Samle alt som er større enn elementet til høyre for det.
+  - Gjøre dette rekursivt på venstre og høyre partisjon.
+
+  Vi tar altså og velger en index i slik 0 <= i < n som kalles et
+  pivot-element og deretter:
+  
+  - Søker fra venstre mot høyre etter et element som er større enn A[i].
+  - Søker fra høyre mot venstre etter et element som er mindre enn A[i].
+  - Bytt plass på disse to elementene.
+  - Fortsett frem til høyre og venstre pekerne krysser.
+  
+  Quicksort kan bli sett på som en preorder operasjon. Den gjør partisjon på
+  seg selv, før den videre kaller quicksort på venstre og høyre side av pivot.
+
+** Litt om partisjoner
+   Det første vi gjør i en partisjon er å velge en pivot index. I dette
+   tilfellet så velger vi et vilkårlig tall mellom high og low. En annen måte
+   kan være å velge medianen av A[0], A[n//2], A[n-1]. \\
+
+   Vi tar deretter og swapper A[high] med A[pivot index], og setter en variabel
+   pivot til å være A[high]. Deretter initialiserer vi en verdi left til å være den laveste indexed low. \\
+
+   Vi initialiserer enda en verdi right til å begynne fra high - 1 (siden pivot
+   punktet vårt nå ligger i A[high]) og looper så lenge left <= right. 
+
+   1. Mens left er <= right og A[left] er <= pivot, så øker vi left.
+   2. Mens right >= left og A[right] er >= pivot, så dekrementerer vi right.
+   3. Hvis left fortsatt er mindre en right, så swapper vi A[left] med A[right].
+
+   Til slutt så swapper vi A[left] med A[high], og returnerer indeksen left. Ved
+   å gjøre dette så setter vi pivot tilbake til left, som da er dens endelige indeks.
+  
+
+* Bucket sort
+  O(N + n), hvor N er antall bøtter \\
+  Ikke in-place, Stabil \\
+
+  Bucket sort går ut på å lage N bøtter, hvor hver bøtte er en kategori eller
+  sort. Her er kategoriene ordnet. \\
+
+  Elementene vi skal sortere har en kategori, som vi kaller for en nøkkel, og i
+  bucket sort så plasserer vi hvert element i riktig bøtte basert på nøkkelen. \\
+
+  Til slutt så løper vi igjennom hver bøtte, og plasserer de tilbake i arrayet.
+
+
+* Radix sort
+  O(d * (N + n)) hvor d er kategorier \\
+  Ikke in-place, Stabil \\
+
+  Tenk på radix sort som flere runder med bucket sort. For heltall vil dette
+  bety én runde per siffer, for strenger vil det bety en runde per bokstav. Vi
+  tar altså ett "tegn" om gangen, og sorterer basert på det. \\
+
+  Vi har to forskjellige måter å sortere med radix:
+
+** LSD (Least Significant Digit)
+   Stabil \\
+
+   Vi sorterer på mindre viktige komponenter først, og antar at stabiliteten
+   blir bevart senere når vi sorterer på de viktigere komponentene.
+
+   1. Velg viktighets rekkefølge for iterasjoner.
+   2. Lag bøtter for alle aktuelle verdier.
+   3. Distribuer elementene i bøttene basert på nøkkel.
+   4. Merge bøttene i stigende rekkefølge.
+   5. Gå til punkt 1, med neste "least significant digit".
+
+
+** MSD (Most Significant Digit)
+   Ikke garantert stabil \\
+
+   Vi sorterer først på de viktigste komponentene og plasserer de i bøtter, og
+   deretter sorterer hver bucket rekursivt etter neste komponent. Her kan
+   stabiliteten bli brutt hvis det anvendes ustabile sorteringsalgoritmer.

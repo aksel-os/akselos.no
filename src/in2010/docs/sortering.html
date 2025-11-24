@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2025-11-24 Mon 22:48 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sortering</title>
+<meta name="author" content="Aksel Olav Steen" />
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" href="/in2010/assets/style.css" />
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Sortering</h1>
+
+<div id="outline-container-org55f50c3" class="outline-2">
+<h2 id="org55f50c3">Litt om sortering</h2>
+<div class="outline-text-2" id="text-org55f50c3">
+<p>
+Vi har to konsepter rundt sortering. In-place og Stabil sortering <br />
+</p>
+
+<p>
+For at en algoritme skal være in-place betyr det at vi opererer alltid over
+det samme arrayet, og vi lager ikke nye arrayer. <br />
+</p>
+
+<p>
+For at en algoritme skal være stabil vil det bety at elementer med lik verdi
+vil opprettholde samme rekkefølge etter arrayet er blitt sortert. <br />
+</p>
+
+<p>
+Ved å bruke sorterte arrayer vil vi også ha en ekstremt mer effektiv måte for
+lookup, nemlig en algoritme kalt Binær Søk, som da gir oss O(log(n)) for
+lookup.
+</p>
+</div>
+</div>
+<div id="outline-container-orga088eea" class="outline-2">
+<h2 id="orga088eea">Bubble sort</h2>
+<div class="outline-text-2" id="text-orga088eea">
+<p>
+O(n<sup>2</sup>) <br />
+In-place, Stabil <br />
+</p>
+
+<p>
+Tanken bak bubble-sort er å løpe igjennom arrayet, og deretter rette opp
+"feil". Vi gjør dette helt til det ikke er flere feil å rette opp i.
+</p>
+
+<ol class="org-ol">
+<li>Vi løper over hvert par av etterfølgende elementer i arrayet.</li>
+<li>Vi bytter deretter om rekkefølgen på et par dersom det ikke er ordnet.</li>
+<li>Gå til punkt 1 dersom det forekommer minst ett bytte.</li>
+</ol>
+
+<p>
+Totalt med bubble sort vil vi få (n(n-1)/2) iterasjoner. Ved å løse opp
+paranteser får vi O(n<sup>2</sup>) som store O notasjon.
+</p>
+</div>
+</div>
+<div id="outline-container-orgd2debf1" class="outline-2">
+<h2 id="orgd2debf1">Selection sort</h2>
+<div class="outline-text-2" id="text-orgd2debf1">
+<p>
+O(n<sup>2</sup>) <br />
+In-place, Ikke stabil <br />
+</p>
+
+<p>
+Idéen bak selection sort er å finne det minste elementet av resten, og
+plassere det fremst. Dermed er selection sort normalt ikke stabil.
+</p>
+
+<ol class="org-ol">
+<li>La i være 0.</li>
+<li>Finn hvor det minste elementet fra i og utover ligger.</li>
+<li>Bytt ut det minste elementet på plass med i.</li>
+<li>Øk i, og gå til punkt 2 frem til i når størrelsen av arrayet.</li>
+</ol>
+
+<p>
+Vi får da at under enhver iterasjon vil verdier til venstre for i være
+sortert. Selection sort vil også maksimalt utføre n-1 swaps, som kan være
+nyttig i de tilfellene hvor bytting er dyrt. <br />
+</p>
+
+<p>
+Merk at i selection sort så kan vi ikke bryte den ytre loopen tidlig slik vi
+kan med bubble sort.
+</p>
+</div>
+</div>
+<div id="outline-container-org5342357" class="outline-2">
+<h2 id="org5342357">Insertion sort</h2>
+<div class="outline-text-2" id="text-org5342357">
+<p>
+O(n<sup>2</sup>) <br />
+In-place, Stabil <br />
+</p>
+
+<p>
+Tanken rundt insertion sort er å plassere alle elementene sortert inn i en
+liste. Vi lar alle elementer til venstre for en gitt posisjon i være sortert.
+</p>
+
+<ol class="org-ol">
+<li>La i være 1.</li>
+<li>Dra det i-te elementet mot venstre som ved sortert innsetting.</li>
+<li>Øk i, og gå til punkt 2 frem til i når størrelsen av arrayet.</li>
+</ol>
+
+<p>
+Insertion sort egner seg ekstremt bra på "nesten sorterte" arrayer, dette
+gjør at den ofte er blant de raskeste algoritmene på små arrayer.
+</p>
+</div>
+<div id="outline-container-orgf06125d" class="outline-3">
+<h3 id="orgf06125d">Litt pseudokode</h3>
+<div class="outline-text-3" id="text-orgf06125d">
+<div class="org-src-container">
+<pre class="src src-nil">for i &lt;- 1 to |arr|
+  j &lt;- i
+  while j &gt; 0 and arr[j] &lt; arr[j-1]
+    swap arr[j], arr[j-1]
+    decrement j by 1 
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orga9443ec" class="outline-2">
+<h2 id="orga9443ec">Heapsort</h2>
+<div class="outline-text-2" id="text-orga9443ec">
+<p>
+O(n log(n)) <br />
+In-place, Ikke stabil <br />
+</p>
+
+<p>
+Idéen bak heapsort er å bygge en heap, og deretter poppe elementer av heapen.
+Fordi en heap kan implementeres med et array, gjør vi arrayet om til en heap.
+</p>
+
+<ol class="org-ol">
+<li>Bygge en max-heap med BubbleDown fra floor(n / 2) ned til 0.</li>
+<li>La i være n - 1.</li>
+<li>Bytt A[0] og A[i], og kall på BubbleDown med n = i for en redusert heap.</li>
+<li>Senk i, og gå til punkt 3 frem til i blir 0.</li>
+</ol>
+
+<p>
+Under prosessen vil da alle verdier til høyre for i være sortert.
+</p>
+</div>
+<div id="outline-container-org1522a65" class="outline-3">
+<h3 id="org1522a65">Litt om heapifisering</h3>
+<div class="outline-text-3" id="text-org1522a65">
+<p>
+Vi begynner på i &lt;- floor(n / 2), og beveger oss ned til i = 0. Dette er
+fordi for enhver nodeindeks i &gt;= floor(n / 2) gjelder at 2i + 2 &gt;= n, altså
+har den ingen barn, og dermed oppfyller regelen til en max-heap hvor foreldrenoder ikke kan ha barn større enn seg selv.
+</p>
+
+<ol class="org-ol">
+<li>Vi begynner med å initialisere følgende verdier.
+<ul class="org-ul">
+<li>largest &lt;- i. Denne holder styr på den største indeksen.</li>
+<li>left &lt;- i*2 + 1. Denne holder styr på indeksen til venstre barnet.</li>
+<li>right &lt;- i*2 + 2. Denne holder styr på indeksen til høyre barnet.</li>
+</ul></li>
+<li>Hvis venstre-barn eller høyre-barn er større enn A[i], oppdater
+largest til den nye største verdien.</li>
+<li>Hvis i ikke er largest så swapper vi A[largest] med A[i], og kaller
+rekursivt på BubbleDown med largest som argument for i.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-org546cf7f" class="outline-2">
+<h2 id="org546cf7f">Merge sort</h2>
+<div class="outline-text-2" id="text-org546cf7f">
+<p>
+O(n log(n)) <br />
+Ikke in-place, Stabil <br />
+</p>
+
+<p>
+Idéen bak merge sort er å splitte arrayet i ca. to like store deler. Deretter
+sorterer vi de to mindre arrayene, og til slutt så fletter vi (<i>merge</i>) de to
+sorterte arrayene sammen.
+</p>
+
+<ol class="org-ol">
+<li>La n angi størrelsen på arrayet A</li>
+<li>Hvis n &lt;= 1 så returner A</li>
+<li>La i være floor(n / 2)</li>
+<li>Splitt arrayet i to deler, A[0, i-1], A[i, n-1]</li>
+<li>Anvend merge sort rekursivt på de splittede arrayene</li>
+<li>Flett sammen A[0, i-1] og A[i, n-1] sortert</li>
+</ol>
+
+<p>
+Merge sort kan bli sett på som en postorder operasjon. Vi kaller rekursivt på
+venstre subtre, deretter høyre subtre, og til slutt rot-noden.
+</p>
+</div>
+<div id="outline-container-org7d4f659" class="outline-3">
+<h3 id="org7d4f659">Litt om merging</h3>
+<div class="outline-text-3" id="text-org7d4f659">
+<p>
+Vi tar in 3 variabler, A1, A2, og A. Hvor A1 og A2 er den splittet delen av
+A. Deretter løper vi igjennom A1 og A2, og sammenligner de med hverandre. Vi
+må også holde styr på hvor mange av elementene i A1 og A2 vi har flyttet på. <br />
+</p>
+
+<p>
+For enhver variabel i A1 og A2 som vi sammenligner, så setter vi den minste
+variablen på plassen A[p1 + p2], hvor p1, p2 er en teller som øker for hver
+gang vi setter ett element fra det korresponderende arrayet. <br />
+</p>
+
+<p>
+Etter p1 eller p2 blir større enn lengden til sitt korresponderende array så
+vet vi at vi er ferdig med alle elementene i en av de. <br />
+</p>
+
+<p>
+Til slutt må vi da kaste på de siste elementene i det arrayet som vi ikke
+har blitt ferdig med. <br />
+</p>
+
+<p>
+Det er viktig å vite at grunnen til at merge sort blir ansett for å være
+stabil er at under sammenligning av A1 og A2 tar vi alltid fra A1 under
+likhet, altså brukes A1[p1] &lt;= A2[p2].
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orga192364" class="outline-2">
+<h2 id="orga192364">Quicksort</h2>
+<div class="outline-text-2" id="text-orga192364">
+<p>
+O(n log(n)), O(n<sup>2</sup>) <br />
+In-place, Ikke stabil <br />
+</p>
+
+<p>
+Idéen bak quicksort er å velge ett element, og deretter:
+</p>
+
+<ul class="org-ul">
+<li>Samle alt som er mindre enn elementet til venstre for det.</li>
+<li>Samle alt som er større enn elementet til høyre for det.</li>
+<li>Gjøre dette rekursivt på venstre og høyre partisjon.</li>
+</ul>
+
+<p>
+Vi tar altså og velger en index i slik 0 &lt;= i &lt; n som kalles et
+pivot-element og deretter:
+</p>
+
+<ul class="org-ul">
+<li>Søker fra venstre mot høyre etter et element som er større enn A[i].</li>
+<li>Søker fra høyre mot venstre etter et element som er mindre enn A[i].</li>
+<li>Bytt plass på disse to elementene.</li>
+<li>Fortsett frem til høyre og venstre pekerne krysser.</li>
+</ul>
+
+<p>
+Quicksort kan bli sett på som en preorder operasjon. Den gjør partisjon på
+seg selv, før den videre kaller quicksort på venstre og høyre side av pivot.
+</p>
+</div>
+<div id="outline-container-org27d07c5" class="outline-3">
+<h3 id="org27d07c5">Litt om partisjoner</h3>
+<div class="outline-text-3" id="text-org27d07c5">
+<p>
+Det første vi gjør i en partisjon er å velge en pivot index. I dette
+tilfellet så velger vi et vilkårlig tall mellom high og low. En annen måte
+kan være å velge medianen av A[0], A[n//2], A[n-1]. <br />
+</p>
+
+<p>
+Vi tar deretter og swapper A[high] med A[pivot index], og setter en variabel
+pivot til å være A[high]. Deretter initialiserer vi en verdi left til å være den laveste indexed low. <br />
+</p>
+
+<p>
+Vi initialiserer enda en verdi right til å begynne fra high - 1 (siden pivot
+punktet vårt nå ligger i A[high]) og looper så lenge left &lt;= right. 
+</p>
+
+<ol class="org-ol">
+<li>Mens left er &lt;= right og A[left] er &lt;= pivot, så øker vi left.</li>
+<li>Mens right &gt;= left og A[right] er &gt;= pivot, så dekrementerer vi right.</li>
+<li>Hvis left fortsatt er mindre en right, så swapper vi A[left] med A[right].</li>
+</ol>
+
+<p>
+Til slutt så swapper vi A[left] med A[high], og returnerer indeksen left. Ved
+å gjøre dette så setter vi pivot tilbake til left, som da er dens endelige indeks.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org0cae2bc" class="outline-2">
+<h2 id="org0cae2bc">Bucket sort</h2>
+<div class="outline-text-2" id="text-org0cae2bc">
+<p>
+O(N + n), hvor N er antall bøtter <br />
+Ikke in-place, Stabil <br />
+</p>
+
+<p>
+Bucket sort går ut på å lage N bøtter, hvor hver bøtte er en kategori eller
+sort. Her er kategoriene ordnet. <br />
+</p>
+
+<p>
+Elementene vi skal sortere har en kategori, som vi kaller for en nøkkel, og i
+bucket sort så plasserer vi hvert element i riktig bøtte basert på nøkkelen. <br />
+</p>
+
+<p>
+Til slutt så løper vi igjennom hver bøtte, og plasserer de tilbake i arrayet.
+</p>
+</div>
+</div>
+<div id="outline-container-orgc2b76a5" class="outline-2">
+<h2 id="orgc2b76a5">Radix sort</h2>
+<div class="outline-text-2" id="text-orgc2b76a5">
+<p>
+O(d * (N + n)) hvor d er kategorier <br />
+Ikke in-place, Stabil <br />
+</p>
+
+<p>
+Tenk på radix sort som flere runder med bucket sort. For heltall vil dette
+bety én runde per siffer, for strenger vil det bety en runde per bokstav. Vi
+tar altså ett "tegn" om gangen, og sorterer basert på det. <br />
+</p>
+
+<p>
+Vi har to forskjellige måter å sortere med radix:
+</p>
+</div>
+<div id="outline-container-orgfc42826" class="outline-3">
+<h3 id="orgfc42826">LSD (Least Significant Digit)</h3>
+<div class="outline-text-3" id="text-orgfc42826">
+<p>
+Stabil <br />
+</p>
+
+<p>
+Vi sorterer på mindre viktige komponenter først, og antar at stabiliteten
+blir bevart senere når vi sorterer på de viktigere komponentene.
+</p>
+
+<ol class="org-ol">
+<li>Velg viktighets rekkefølge for iterasjoner.</li>
+<li>Lag bøtter for alle aktuelle verdier.</li>
+<li>Distribuer elementene i bøttene basert på nøkkel.</li>
+<li>Merge bøttene i stigende rekkefølge.</li>
+<li>Gå til punkt 1, med neste "least significant digit".</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org6933815" class="outline-3">
+<h3 id="org6933815">MSD (Most Significant Digit)</h3>
+<div class="outline-text-3" id="text-org6933815">
+<p>
+Ikke garantert stabil <br />
+</p>
+
+<p>
+Vi sorterer først på de viktigste komponentene og plasserer de i bøtter, og
+deretter sorterer hver bucket rekursivt etter neste komponent. Her kan
+stabiliteten bli brutt hvis det anvendes ustabile sorteringsalgoritmer.
+</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
