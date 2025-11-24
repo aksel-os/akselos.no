@@ -1,0 +1,63 @@
+name: Deploy full site (global + in2010)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Build in2010 subsite via Nix (subflake in src/in2010)
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Build in2010 with Nix
+        id: in2010
+        run: |
+          OUT=$(nix build ./src/in2010 --print-out-paths)
+          echo "out=$OUT" >> "$GITHUB_OUTPUT"
+
+      # Assemble a single artifact containing:
+      # - your existing global site from src/ at the root
+      # - the in2010 site under /in2010 from the Nix build
+      - name: Create staging artifact
+        run: |
+          rm -rf staging
+          mkdir -p staging
+          # Copy your existing global static site (as before)
+          cp -r src/* staging/ || true
+
+          # Merge the Nix-built in2010 site under /in2010
+          rsync -a "${{ steps.in2010.outputs.out }}/" staging/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: staging
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

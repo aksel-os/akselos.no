@@ -3,7 +3,7 @@
 (require 'ox-html)
 (require 'seq)
 
-;; Prefer a vendored htmlize if present; otherwise, load gracefully.
+;; Optional: prefer vendored htmlize if present; load gracefully.
 (let* ((in2010-root (file-name-directory (or load-file-name buffer-file-name)))
        (vendor-dir (expand-file-name "vendor" in2010-root)))
   (when (file-directory-p vendor-dir)
@@ -11,50 +11,23 @@
 (condition-case _
     (require 'htmlize)
   (error
-   ;; Disable htmlize usage when not available
+   ;; Disableize usage when not available
    (setq org-html-htmlize-output-type nil)))
+
+;; Use a project-local timestamp/cache directory to avoid HOME issues in Nix
+(let* ((in2010-root (file-name-directory (or load-file-name buffer-file-name)))
+       (cache-dir  (expand-file-name ".org-timestamps" in2010-root)))
+  (setq org-publish-timestamp-directory cache-dir)
+  (unless (file-directory-p cache-dir)
+    (make-directory cache-dir t)))
+
+;; If you prefer fully cacheless builds (always rebuild), uncomment:
+;; (setq org-publish-use-timestamps-flag nil)
 
 (defun in2010/publish-force ()
   "Force rebuild of the in2010-org project."
   (interactive)
   (org-publish-project "in2010-org" 'force))
-
-;; -------- Footer helpers (Git date and conditional injection) --------
-
-(defun in2010/git-last-commit-date (file)
-  "Return last commit date (YYYY-MM-DD) for FILE, or nil if not available."
-  (let* ((git-root (locate-dominating-file file ".git"))
-         (default-directory git-root)
-         (buf (generate-new-buffer " *in2010-git-date*"))
-         (status (and git-root
-                      (with-current-buffer buf
-                        (call-process "git" nil t nil
-                                      "log" "-1" "--format=%cs" "--" file)))))
-    (prog1
-        (when (and git-root (eq status 0))
-          (string-trim (with-current-buffer buf (buffer-string))))
-      (kill-buffer buf))))
-
-(defun in2010/html-footer-filter (output backend info)
-  "Append a 'Last updated' footer to HTML OUTPUT except for the sitemap index.
-Insert the footer before </body> to ensure it renders."
-  (if (not (org-export-derived-backend-p backend 'html))
-      output
-    (let* ((file (plist-get info :input-file))
-           (basename (and file (downcase (file-name-nondirectory file)))))
-      (if (and basename (string-equal basename "index.org"))
-          output
-        (let* ((git-date (and file (in2010/git-last-commit-date file)))
-               (mtime (and file (file-attribute-modification-time (file-attributes file))))
-               (date (or git-date (and mtime (format-time-string "%Y-%m-%d" mtime)) "—"))
-               (footer (format "<footer class=\"page-footer\">Last updated: %s</footer>" date))
-               ;; try to inject before </body> (case-insensitive)
-               (case-fold-search t))
-          (if (string-match "</body>" output)
-              (replace-match (concat footer "\n</body>") t t output)
-            ;; fallback: append (shouldn’t happen in normal HTML)
-            (concat output "\n" footer)))))))
-
 
 ;; -------- Minimal, pretty sitemap generator --------
 
@@ -101,11 +74,7 @@ Insert the footer before </body> to ensure it renders."
          :section-numbers t
          ;; Absolute path from site root (root = src/)
          :html-head "<link rel=\"stylesheet\" href=\"/in2010/assets/style.css\" />"
-         ;; Disable the default postamble; we inject our footer via filter
          :html-postamble nil
-         ;; Add our conditional footer filter
-         :filters-alist ((:filter-final-output . in2010/html-footer-filter))
-         ;; Minimal overview (sitemap)
          :auto-sitemap t
          :sitemap-filename "index.org"
          :sitemap-title "Notes"
