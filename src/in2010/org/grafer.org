@@ -1,0 +1,119 @@
+#+title: Grafer
+#+author: Aksel Olav Steen
+#+date: Nov 22 2025
+:PROPERTIES:
+#+options: toc:nil num:nil
+#+latex_header: \setlength{\parindent}{0pt}
+#+latex_header: \usepackage[margin=3cm]{geometry}
+#+latex_engraved_theme: nano-light
+:END:
+
+* Litt om grafer
+  Grafer finnes i alle mulige former. Vi ser de oftest i kart, men også i
+  nettverk, og faktiske biologiske trær. Grafer lar oss kort sagt vise hvordan
+  ting henger sammen. \\
+
+  En graf er lettest definert som en mengde av to mengder, V og E. V inneholder
+  alle nodene i grafen, som også kan bli kalt vertex på engelsk. E inneholder
+  alle kantene, som da er tupler med 2 noder som forteller oss at nodene er
+  relatert. \\
+  
+  I in2010 har vi ikke parallelle kanter eller løkker, så les in1150 om du
+  trenger info om de. \\
+
+** Retning
+   Det at en graf har en retning betyr at man har en kant til, men ikke
+   nødvendigvis tilbake. Med andre ord så har rettede grafer kanter som tupler,
+   og ikke mengder. \\
+
+** Vekt
+   En vektet graf har en vekt over enhver kant, og har ofte en assosiert vekt
+   funksjon kalt w. For enhver kant fra u til v, vil w(u,v) angi vekten på
+   kanten. \\
+
+   I vektede grafer er vi oftest interessert i den /korteste/ stien, altså den
+   stien som har lavest akkumulert vekt. \\
+
+** Spenntre
+   Et spenntre er et tre som består av de samme nodene, og noen av kantene.
+   Altså et spenntre er en Hamiltonsti. \\
+
+   Når vi har en urettet, men vektet graf er det ofte nyttig å finne minimale
+   spenntrær. Det er da Hamiltonstiene med lavest akkumulert vekt. Dette kan
+   la oss for eksempel kartlegge den billigste ruten å legge nettverkskabler
+   mellom bygg. \\
+
+   En graf kan ha flere minimale spenntrær, et tilfellene er hvor alle kantene
+   har samme vekt.
+
+** Sammenheng
+   En graf kalles sammenhengende hvis det finnes en sti mellom alle par av
+   noder. Vi kan sjekke om en graf er sammenhengende med et enkelt (B|D)FS søk,
+   om vi da har besøkt alle noder i grafen fra en vilkårlig node så er grafen
+   sammenhengende. \\
+
+   Om en graf ikke er sammenhengende kan den deles inn i komponenter. \\
+
+   En graf er k-sammenhengende hvis grafen forblir sammenhengende selv hvis k-1
+   vilkårlige noder fjernes. Sagt annerledes, det finnes k distinkte stier
+   mellom hvert par av noder. \\
+
+   Dette er nyttig for å kartlegge redundans eller sårbarheter. I et nettverk
+   vil det bety at k-1 mange rutere kan gå ned, og vi fortsatt får sendt
+   informasjon. I krigføring kan det brukes for å finne svake transportlinjer. \\
+  
+
+* Adjacency matrix
+  Grafer \\
+
+
+* Adjacency list
+  Grafer \\
+
+
+* DFS
+  Grafer \\
+
+
+* BFS
+  Grafer \\
+
+
+* TopSort
+  Grafer \\
+  
+
+* DFSTopSort
+  Grafer \\
+
+  
+* Dijkstra
+  Vektede grafer \\
+
+  
+* Bellman-Ford
+  Vektede grafer \\
+
+  
+* DAGShortestPath
+  Vektede grafer \\
+
+  
+* Prim's
+  Vektede grafer \\
+
+  
+* Kruskal
+  Vektede grafer \\
+
+  
+* Boruvkas
+  Vektede grafer \\
+  
+
+* Tarjan
+  Sammenhengende grafer \\
+
+  
+* Kosaraju
+  Sammenhengende grafer \\
