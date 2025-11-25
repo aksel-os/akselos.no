@@ -15,7 +15,7 @@
 
   En graf er lettest definert som en mengde av to mengder, V og E. V inneholder
   alle nodene i grafen, som også kan bli kalt vertex på engelsk. E inneholder
-  alle kantene, som da er tupler med 2 noder som forteller oss at nodene er
+  alle kantene, som da er mengder med 2 noder som forteller oss at nodene er
   relatert. \\
   
   I in2010 har vi ikke parallelle kanter eller løkker, så les in1150 om du
@@ -64,28 +64,94 @@
   
 
 * Adjacency matrix
+  O(|V^2|) \\
   Grafer \\
+
+  Nabomatriser egner seg best for tette grafer. Med andre ord betyr det at jo
+  fullere nabomatrisen er, jo bedre egner den seg. \\
+
+  Nabomatriser egner seg ikke godt til å finne alle naboer til en node, siden
+  vi da må iterere gjennom hele kolonnen eller raden. Men nabomatriser har
+  konstant tid for å se om to noder er naboer. 
 
 
 * Adjacency list
+  O(|V| + |E|) \\
   Grafer \\
+
+  Nabolister (Nabomap/Nabobuckets) egner seg best for tynne grafer, altså
+  grafer med få kanter. Nabolister kan lett bli implementert ved hjelp av
+  hashmaps, hvor nodene er nøklene, og verdiene er en liste med nabonoder. \\
+
+  Nabolister egner seg godt for å finne alle naboer til en node, siden vi da
+  kun bruker O(deg(v)), altså utgraden til v, i stedet for å løpe igjennom alle
+  mulige noder. 
 
 
 * DFS
+  O(|V| + |E|) \\
   Grafer \\
+  Harpun \\
+
+  DFS følger en vilkårlig sti vekk fra den gitte startnoden, og vil alltid
+  prøve å finne ubesøkte noder som leder vekk fra starten. I de tilfellene som
+  den ikke finner noen ubesøkte noder, så backtracker den til den finner nye
+  ubesøkte noder som leder vekk. \\
+
+  DFS blir ofte implementert rekursivt, hvor vi da implisit bruker en stack
+  kalt /call stacken/, også kalt /runtime stacken/. DFS kan da også bli
+  implementert med en eksplisitt stack, som da gjør den iterativ. \\
+
+  DFS er den mest minne-effektive løsningen for å finne en sti mellom to noder.
 
 
 * BFS
-  Grafer \\
-
-
-* TopSort
+  O(|V| + |E|) \\
   Grafer \\
   
+  BFS besøker hele tiden den nærmeste ubesøkte noden fra startnoden. Den jobber
+  seg lagvis gjennom grafen, med å første besøke alle direkte naboer, også
+  naboene sine naboer, osv,. Man kan se på BFS traversering som en løk. Man
+  begynner i sentrum, og jobber seg lagvis utover, hvor da søkeområdet blir
+  større og større. \\
 
-* DFSTopSort
+  BFS blir brukt for å finne de korteste stiene fra en start node til andre
+  noder, og blir implementert iterative ved bruk av en kø.
+  
+
+* Kahn's (TopSort)
+  O(|V| + |E|)
   Grafer \\
 
+  TopSort er den simpleste algoritmen for topologisk sortering. Tanken er å
+  finne en vilkårlig node med inngrad null, deretter fjern den, og oppdater
+  alle noder sin inngrad. Dette gjør vi så lenge vi har noder med inngrad null.
+
+  Dersom det ikke går å topologisk sortere nodene på denne måten, altså at vi
+  ikke får berørt alle nodene, så kan vi konkludere med at grafen inneholder en
+  sykel. \\
+
+  For hver node med initiell ingrad 0 blir plassert på en stack, deretter så
+  itererer vi over stacken:
+
+  1. Pop v fra stacken, og legg den til i en liste output.
+  2. For hver nabonode u til v, fjern v som nabonode.
+  3. Hvis u har en inngrad 0, push u på stacken.
+  4. Hvis listen output er mindre en mengden noder, få panikk
+
+     
+* DFSTopSort
+  O(|V| + |E|) \\
+  Grafer \\
+
+  En graf kan sorteres ved hjelp av et DFS søk, hvor vi da modifiserer DFSVisit til
+  å legge nodene på en stack i postorder operasjon. Altså etter alle dens
+  naboer er prosessert. \\
+
+  Intuisjonen bak bruk av postorder er at nodene med utgrad null legges først
+  på stacken, som da betyr at de nodene mot toppen av stacken er noder med
+  ingrad null, og da kommer under de første poppsene.
+  
   
 * Dijkstra
   Vektede grafer \\
