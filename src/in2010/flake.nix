@@ -1,129 +1,94 @@
 {
-  description = "Nix-driven build and preview for in2010 (Org → HTML)";
+  description = "Nix-driven build and preview for Org → HTML";
+  # This file is mainly GPT generated as a fun test of how current models work
+  # I could've highly probably build a better/faster implementation, but
+  # decided to spend 4 hours arguing with different GPT models
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
     { self, nixpkgs }:
     let
+      lib = nixpkgs.lib;
       systems = [
         "x86_64-linux"
         "aarch64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
       ];
+
       forEachSystem =
         f:
-        builtins.listToAttrs (
-          map (system: {
-            name = system;
-            value = f system;
-          }) systems
+        lib.genAttrs systems (
+          system:
+          let
+            pkgs = import nixpkgs { inherit system; };
+            emacs = pkgs.emacs-nox;
+          in
+          f { inherit pkgs emacs system; }
         );
     in
     {
       packages = forEachSystem (
-        system:
+        { pkgs, emacs, ... }:
         let
-          pkgs = import nixpkgs { inherit system; };
-        in
-        {
-          # Main site package
           site = pkgs.stdenvNoCC.mkDerivation {
-            pname = "in2010-site";
+            pname = "site";
             version = "1.0";
             src = ./.;
 
-            buildInputs = [ pkgs.emacs-nox ];
+            buildInputs = [ emacs ];
 
             buildPhase = ''
-              set -eu
-              export HOME=$PWD   # ensure Org writes go to the build dir (not /homeless-shelter)
-              emacs --batch --load publish.el --funcall org-publish-all
+              set -euo pipefail
+              export HOME="$PWD"
+              export LC_ALL=C.UTF-8
+              mkdir -p "public"
+
+              ${emacs}/bin/emacs -Q --batch \
+                --load publish.el \
+                --funcall org-publish-all
             '';
 
             installPhase = ''
-              set -eu
-              mkdir -p $out/in2010
-              # Put all exported HTML under /in2010
-              cp -r docs/* $out/in2010/ || true
-
-              # Put assets under /in2010/assets to match href="/in2010/assets/style.css"
-              mkdir -p $out/in2010/assets
-              cp -r assets/* $out/in2010/assets/
+              set -euo pipefail
+              mkdir -p "$out"
+              cp -r "public/." "$out/"
             '';
-
-            dontFixup = true;
           };
-
-          # Make `nix build` default to building the site
-          default = self.packages.${system}.site;
+        in
+        {
+          site = site;
+          default = site;
         }
       );
 
       apps = forEachSystem (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-          siteOut = self.packages.${system}.site;
-        in
+        { pkgs, system, ... }:
         {
-          # Serve the built output
           serve = {
             type = "app";
-            program = toString (
-              pkgs.writeShellScript "serve-in2010" ''
-                set -eu
-                echo "Building site…"
-                nix build . --no-link
-                echoServing ${siteOut} at http://127.0.0.1:8000"
-                cd ${siteOut}
-                exec ${pkgs.python3}/bin/python -m http.server 8000
-              ''
-            );
+            program = "${
+              pkgs.writeShellApplication {
+                name = "serve";
+                runtimeInputs = [
+                  pkgs.nix
+                  pkgs.python3
+                ];
+                text = ''
+                  set -euo pipefail
+                  # Always rebuild to pick up changes
+                  out=$(nix build .#site --no-link --print-out-paths)
+
+                  echo "Serving at http://127.0.0.1:8000"
+                  cd "$out"
+                  exec python -m http.server 8000
+                '';
+              }
+            }/bin/serve";
           };
 
-          # Watch and rebuild on changes
-          watch = {
-            type = "app";
-            program = toString (
-              pkgs.writeShellScript "watch-in2010" ''
-                set -eu
-                WEXEC=${pkgs.watchexec}/bin/watchexec
-
-                nix build . --no-link
-
-                cd ${siteOut}
-                ${pkgs.python3}/bin/python -m http.server 8000 &
-                SERVER_PID=$!
-                echo "Serving at http://127.0.0.1:8000"
-                trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT INT TERM
-
-                cd "${toString ./.}"
-                exec "$WEXEC" -r -w . -- \
-                  sh -c 'echo "Rebuilding…"; nix build . --no-link && echo "Rebuilt."'
-              ''
-            );
-          };
-
-          # Make `nix run` default to serving
           default = self.apps.${system}.serve;
-        }
-      );
-
-      devShells = forEachSystem (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-        in
-        {
-          default = pkgs.mkShell {
-            packages = [
-              pkgs.emacs
-              pkgs.python3
-              pkgs.watchexec
-            ];
-          };
         }
       );
     };
