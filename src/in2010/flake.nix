@@ -4,7 +4,12 @@
   # I could've highly probably build a better/faster implementation, but
   # decided to spend 4 hours arguing with different GPT models
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.nixpkgs = {
+    type = "github";
+    owner = "NixOS";
+    repo = "nixpkgs";
+    ref = "nixos-25.05";
+  };
 
   outputs =
     { self, nixpkgs }:
