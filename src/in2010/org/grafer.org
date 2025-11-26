@@ -91,7 +91,7 @@
 * DFS
   O(|V| + |E|) \\
   Grafer \\
-  Harpun \\
+  Klatrer i fjellveg \\
 
   DFS følger en vilkårlig sti vekk fra den gitte startnoden, og vil alltid
   prøve å finne ubesøkte noder som leder vekk fra starten. I de tilfellene som
@@ -120,7 +120,7 @@
   
 
 * Kahn's (TopSort)
-  O(|V| + |E|)
+  O(|V| + |E|) \\
   Grafer \\
 
   TopSort er den simpleste algoritmen for topologisk sortering. Tanken er å
@@ -151,35 +151,118 @@
   Intuisjonen bak bruk av postorder er at nodene med utgrad null legges først
   på stacken, som da betyr at de nodene mot toppen av stacken er noder med
   ingrad null, og da kommer under de første poppsene.
+
+
+* Litt om korte stier
+  asdasd
   
   
 * Dijkstra
+  O((|V| + |E|) * log(|V|)) \\
   Vektede grafer \\
+
+  Dijkstras algoritme er en måte for å finne stien mellom to noder med lavest
+  akkumulert vekt. \\
+
+  Tanken bak Dijkstra er å modifisere BFS til å ta høyde for kantenes vekt. Vi
+  anvender da en prioritetskø, som ordner noder etter avstand fra startnoden,
+  og vi besøker alltid den /nærmeste/ ubesøkte noden fra startnoden med hensyn
+  til akkumulert vekt. \\
+
+  Initielt setter vi avstanden til startnoden som 0, og alle andre noder som
+  uendelig. Deretter itererer vi over køen, besøker alle nabonoder, og
+  oppdaterer vekten hvis den er lavere. \\
+
+  I Dijkstra så besøker vi alle noder én gang, hvor for hver node kaller vi
+  RemoveMin. Vi besøker også alle kanter én gang, og kaller på Insert. Dijkstra
+  får da O(|E| * log(|V|) + |V| * log(|V|)). Dette kan da faktoriseres ut til
+  O((|E| + |V|) * log(|V|)). \\
+
+  Dijkstra kan gi feil svar for grafer med negative vekter, fordi Dijkstra går
+  ut i fra at den første løsningen er den beste. Hvis grafen da inneholder
+  negative sykler vil den korteste stien aldri bli funnet, fordi det lønner vil
+  alltid lønne seg å ta en runde til i syklusen.
 
   
 * Bellman-Ford
+  O(|V| * |E|) \\
   Vektede grafer \\
+
+  Bellman-Ford er en ikke-grådig algoritme, og opererer rundt prinsippet om at
+  en sti kan ikke inneholde mer enn |V| - 1 kanter. En sti med |V| kanter må
+  inneholde en sykel. Algoritmen estimerer avstanden for alle noder /mange
+  ganger/, hvor da |V| - 1 ganger er nok. \\
+
+  Hvis en node får en laverer estimert avstand etter |V| - 1 iterasjoner, så
+  inneholder grafen en negativ sykel. \\
+
+  BF går igjennom alle kanter |V| ganger, siden kanter er menger med to noder
+  kan i verste tilfellet for tette grafer videre forenkles til O(|V|^3). 
 
   
 * DAGShortestPath
+  O(|V| + |E|) \\
   Vektede grafer \\
 
+  For å finne den korteste stien i en DAG, så må vi først sortere grafen ved
+  hjelp av Kahn's eller DFSTopSort. Deretter utøver vi standard korteste sti
+  algoritme ved å iterere over alle sorterte noder, og sjekke den akkumulerte
+  vekten til alle kantene. \\
+
+  Topologisk sortering blir gjort i O(|V| + |E|) tid, og vi må deretter besøke
+  alle noder i O(|V|) tid, og alle kanter i O(|E|) tid.
+  
   
 * Prim's
+  O((|V| + |E|) * log(|V|)) \\
   Vektede grafer \\
 
+  Prims algoritme bygger opp et minimalt spenntre grådig, ved å iterere over en
+  prioritetskø, med kanter. I motsetning av Dijkstra så bryr vi oss ikke om den
+  akkumulerte vekten, men kun om vekten som er minst i hvert tilfelle. \\
+
+  Prims starter i en vilkårlig node, og sammenkobler enhver nabonode som ikke
+  er i T med lavest vekt. \\
+
+  For enhver ubesøkte node, så indekseres den med foreldren som verdi, og deretter så
+  kastes alle kanter til noden på køen med kantvekten som prioritet.
+  
   
 * Kruskal
+  O(|E| * log(|E|))
   Vektede grafer \\
 
+  I motsettning til Prims, så vil Kruskal bygge opp ett spenntre for hver
+  komponent. Dette betyr da at en sammenhengede graf fortsatt for ett spenntre,
+  men en graf med komponenter vil da får en spennskog, hvor hver komponent vil
+  ha et tilsvarende spenntre. \\
+
+  Kruskal går igjennom en prioritetskø av alle kanter prioritert på vekt. Hvis
+  det ikke eksisterer en sti mellom nodene, så blir kanten lagt til i spenntreet. 
+  
   
 * Boruvkas
+  O(|E| * log(|V|)) \\
   Vektede grafer \\
   
+  I likhet med Kruskal så lager Boruvkas en spennskog. I utgangspunktet
+  opererer Boruvkas med at enhver node er en komponent. Så lenge det er mer en
+  en komponenter, så gjøres følgende for hver komponent:
+  
+  1. Finn den laveste vektet kanten som kobler to komponenter sammen.
+     + Dette skjer for alle komponenter, i parallell.
+  2. Legg til denne kanten i MST, og sammenslå komponentene.
 
+  Etter enhver iterasjon vil komponentene minst halveres, dette gir oss da
+  O(log(|V|)) iterasjoner. For hver iterasjon så sjekkes |E| kanter, som da gir
+  oss O(|E| * log(|V|))
+
+  
 * Tarjan
+  O(|V| + |E|)
   Sammenhengende grafer \\
 
   
 * Kosaraju
+  O(|V| + |E|)
   Sammenhengende grafer \\
