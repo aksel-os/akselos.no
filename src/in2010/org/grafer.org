@@ -154,7 +154,17 @@
 
 
 * Litt om korte stier
-  asdasd
+  Alle pathfinding algoritmer i in2010 som finner vekt har samme kode for å
+  iterere over kanter, finne ny vekt, og sjekke om ny vekt er mindre
+
+  #+begin_src 
+proc iterateThroughEdges
+  for (u, v) in E do
+    c <-- dist[v] + w(v,u)
+    if c < dist[u] then
+      dist[u] <-- c
+      # Dijkstra: insert u with priority of c
+  #+end_src
   
   
 * Dijkstra
@@ -259,10 +269,42 @@
 
   
 * Tarjan
-  O(|V| + |E|)
+  O(|V| + |E|) \\
   Sammenhengende grafer \\
 
+  Tarjan finner seperasjonsnoder i et tre. Disse nodene er da kritiske deler av
+  grafen som holder den sammenhengende. Hvis alle stier mellom to noder går
+  gjennom den samme noden v, vil v være en separasjonsnode. \\
+
+  Ved å bruke DFS lager vi et spenntre. Når vi møter på en ubesøkt node, lager
+  vi en "discovery edge" eller indekserer noden. Hvis vi da besøker den igjen,
+  vil det skape en "back edge". En node blir ansett som en separasjonsnode hvis
+  den har et barn u, hvor ingen av back-edgene i subtreet u når en predesessor
+  node. \\
+  
+  I Tarjan bruker vi 2 globale hash-maps kalt depth og low. Depth funker som en
+  "visited" og inneholder dybden til enhver node. Low inneholder dybden til den
+  laveste noden u som noden er tilkoblet. \\
+
+  Vi har også et globalt hash-set, som holder styr på alle separasjonsnoder. \\
+
+  Vi modifiserer DFSVisit til å ta sjekke depth i stedet for visited, og i det
+  tilfellet hvor den treffer, så oppdaterer vi low til å være den laveste
+  verdien mellom low av noden, og depth av nabonoden. \\
+
+  Etter vi har kommet oss ned til løvnoden så treffer postorder operasjonen i
+  DFSVisit. Vi oppdaterer noden sin low til å være den minste low verdien
+  mellom noden og nabonoden, og hvis dybden da er mindre eller lik low til
+  nabonoden, så er noden en seperasjonsnode. \\
+
+  Til slutt så returnerer vi settet sets. 
+  
   
 * Kosaraju
-  O(|V| + |E|)
+  O(|V| + |E|) \\
   Sammenhengende grafer \\
+
+  Kosaraju gjør først et fullt DFS søk gjennom grafen G, hvor nodene blir
+  plassert på en stack i postorder (DFSTopSort). Vi må deretter konstruere den
+  reverserte grafen Gr, og deretter gjøre et siste DFS søk på Gr, der
+  rekkefølgen av nodene er diktert av stacken gitt av DFSTopSort.
